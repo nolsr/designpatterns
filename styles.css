@@ -1,0 +1,139 @@
+@font-face {
+    font-family: "Bandeins Strange";
+    src: url("./Bandeins\ Strange\ Variable.woff2") format("woff2-variations");
+    font-weight: 300 700;
+}
+
+* {
+    box-sizing: border-box;
+    --bg: black;
+    --no: white;
+    --sq: #04D976;
+    /* --sq: #FFF53E; */
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: white;
+    font-weight: 700;
+    align-items: center;
+    justify-content: center;
+    font-family: "Bandeins Strange";
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#controls {
+    box-sizing: border-box;
+    position: absolute;
+    right: 100vw;
+    top: 50vh;
+    transform: translateY(-50%);
+    padding: 2rem;
+    background-color: var(--bg);
+    border: 2px solid white;
+    border-left-width: 0;
+    border-radius: 0 1rem 1rem 0;
+    transition: all 0.2s ease;
+    width: 15rem;
+}
+
+#controls::after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 100%;
+    width: 20px;
+    height: 50px;
+    display: block;
+    content: "?";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg);
+    border: 2px solid white;
+    border-left-width: 0;
+    border-radius: 0 8px 8px 0;
+}
+
+#controls:hover {
+    cursor: pointer;
+    transform: translate(100%, -50%);
+}
+
+.grid {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    overflow: hidden;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    grid-template-columns: repeat(auto-fill, 100px);
+    gap: 20px;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    width: 100px;
+    height: 100px;
+    transition: all 0.1s ease;
+    color: var(--no);
+    font-size: 1.5rem;
+}
+
+.active {
+    font-family: "Bandeins Strange";
+    font-variation-settings: "wdth" 900;
+    color: var(--sq) !important;
+    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq); */
+    text-shadow: 0 0 2px #fff, 0 0 6px var(--sq), 0 0 8px var(--sq), 0 0 10px var(--sq), 0 0 6px var(--sq), 0 0 7px var(--sq);
+}
+
+#grid0 {
+    transform: scale(1);
+    filter: brightness(100%);
+}
+#grid1 {
+    transform: scale(0.975);
+    filter: brightness(92%);
+}
+#grid2 {
+    transform: scale(0.95);
+    filter: brightness(84%);
+}
+#grid3 {
+    transform: scale(0.925);
+    filter: brightness(76%);
+}
+#grid4 {
+    transform: scale(0.9);
+    filter: brightness(68%);
+}
+
+#grid0 .active {
+    /* text-shadow: 0 0 1px var(--sq); */
+    /* color: #04D976 !important; */
+}
+#grid1 .active {
+    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq); */
+    /* color: #03A65A !important; */
+}
+#grid2 .active {
+    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq); */
+    /* color: #038C4C !important; */
+}
+#grid3 .active {
+    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq), 0 0 4px var(--sq); */
+    /* color: #02733E !important; */
+}
+#grid4 .active {
+    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq), 0 0 4px var(--sq), 0 0 5px var(--sq); */
+    /* color: #005a30 !important; */
+}
