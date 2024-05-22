@@ -6,6 +6,13 @@ const maxIntervalSize = 5; // 1: 1 Second, 10: 0.1 Seconds
 const modes = ['s', '1', '2', '3', '4'];
 const minActiveFor = 150;
 const maxActiveFor = 1500;
+const soundfile = './2handys.mp3';
+const charInactive = 'O';
+const charActive = 'O';
+// const charActive = 'ק';
+// const charActive = 'ᄌ';
+// const charActive = '†';
+// const charActive = 'վ';
 
 let audio = null;
 let audioSource = null;
@@ -56,18 +63,18 @@ document.addEventListener('keydown', function (e) {
 
 function initSound() {
   audio = document.getElementById('audio');
-  audio.src = './sound.mp3';
+  audio.src = soundfile;
 
   if (!context) {
     context = new AudioContext();
   }
   audio.currentTime = 0;
-  audio.volume = 0.2;
+  audio.volume = 0.5;
   audio.play();
 
   if (!analyser) {
     analyser = context.createAnalyser();
-    analyser.fftSize = 32;
+    analyser.fftSize = 64;
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
   }
@@ -158,10 +165,10 @@ function drawSoundBars() {
     return;
   }
   for (let col = 0; col < 16; col++) {
-    const activeSquares = Math.round((dataArray[col] / 255) * 9);
+    const activeSquares = Math.round((dataArray[Math.floor(col * 1.3)] / 230) * 9);
     if (activeSquares > 0) {
       for (let i = 0; i < 9; i++) {
-        map[0][8 - i][col] = activeSquares > i;
+        map[0][8 - i][col] = activeSquares > i + 1;
       }
     }
   }
@@ -171,8 +178,10 @@ function applyStyle(layer, row, column, cellValue) {
   const cell = selectCell(layer, row, column);
   if (cellValue) {
     cell.addClass('active');
+    cell.html(charActive);
   } else {
     cell.removeClass('active');
+    cell.html(charInactive);
   }
 }
 
@@ -213,9 +222,11 @@ function createGrid(cols, rows) {
       for (let col = 0; col < cols; col++) {
         const div = document.createElement('div');
         div.classList.add('square');
+        div.classList.add('c' + col);
+        div.classList.add('r' + row);
         div.classList.add('square' + layer);
         div.id = `l${layer}r${row}c${col}`;
-        div.textContent = `O`;
+        div.textContent = charInactive;
         grid.appendChild(div);
       }
     }
