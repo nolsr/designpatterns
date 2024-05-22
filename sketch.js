@@ -1,11 +1,16 @@
 // CONFIG
 const numberOfLayers = 5;
-const framerate = 60;
+const framerate = 120;
 const minIntervalSize = 25;
 const maxIntervalSize = 5; // 1: 1 Second, 10: 0.1 Seconds
 const modes = ['s', '1', '2', '3', '4'];
 const minActiveFor = 150;
 const maxActiveFor = 1500;
+
+let audio = null;
+let audioSource = null;
+let analyser = null;
+let context = null;
 
 let intervalSize = 25;
 let activeFor = 250;
@@ -15,6 +20,7 @@ let intervalsPassed = 0;
 let layer0, layer1, layer2, layer3, layer4 = null;
 let map = new Array(numberOfLayers).fill(0).map(() => new Array(9).fill(0).map(() => new Array(16).fill(false))); // [layer, row, column]
 let mapPrevious = structuredClone(map);
+let dataArray = null; // 16 langes array mit werten von 0 bis 255 vom analyser
 
 function setup() {
   noCanvas();
@@ -36,11 +42,59 @@ document.addEventListener('keydown', function (e) {
   if (modes.includes(e.key)) {
     mode = e.key;
     clearMap();
+
+    if (mode === '3') {
+      initSound();
+    } else {
+      if (audio) {
+        audio.pause();
+      }
+    }
   }
 });
 
+
+function initSound() {
+  audio = document.getElementById('audio');
+  audio.src = './sound.mp3';
+
+  if (!context) {
+    context = new AudioContext();
+  }
+  audio.currentTime = 0;
+  audio.volume = 0.2;
+  audio.play();
+
+  if (!analyser) {
+    analyser = context.createAnalyser();
+    analyser.fftSize = 32;
+    const bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
+  }
+
+  if (!audioSource) {
+    audioSource = context.createMediaElementSource(audio);
+    audioSource.connect(analyser);
+    analyser.connect(context.destination);
+  }
+
+  function analyze() {
+    if (mode !== '3') {
+      clearMap();
+      return;
+    }
+    analyser.getByteFrequencyData(dataArray);
+    drawSoundBars();
+    moveLayers();
+    drawMap();
+    requestAnimationFrame(analyze);
+  }
+
+  analyze();
+}
+
 function clearMap() {
-  map =new Array(numberOfLayers).fill(0).map(() => new Array(9).fill(0).map(() => new Array(16).fill(false)));
+  map = new Array(numberOfLayers).fill(0).map(() => new Array(9).fill(0).map(() => new Array(16).fill(false)));
 }
 
 function draw() {
@@ -81,6 +135,9 @@ function draw() {
 }
 
 function onSecondPassed() {
+  if (mode === '3') {
+    return;
+  }
   switch (mode) {
     case '1':
       forward();
@@ -88,9 +145,26 @@ function onSecondPassed() {
     case '2':
       backward();
       break;
+    case '3':
+      drawSoundBars();
+      break;
   }
   moveLayers();
   drawMap();
+}
+
+function drawSoundBars() {
+  if (dataArray === null) {
+    return;
+  }
+  for (let col = 0; col < 16; col++) {
+    const activeSquares = Math.round((dataArray[col] / 255) * 9);
+    if (activeSquares > 0) {
+      for (let i = 0; i < 9; i++) {
+        map[0][8 - i][col] = activeSquares > i;
+      }
+    }
+  }
 }
 
 function applyStyle(layer, row, column, cellValue) {
@@ -107,8 +181,7 @@ function selectCell(layer, row, column) {
 }
 
 function moveLayers() {
-  if (mode === '2') { // reverse
-    console.log('asd');
+  if (mode === '2') {
     for (let layer = 0; layer < numberOfLayers - 1; layer++) {
       map[layer] = structuredClone(map[layer + 1]);
     }
