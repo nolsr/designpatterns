@@ -6,9 +6,9 @@ const maxIntervalSize = 5; // 1: 1 Second, 10: 0.1 Seconds
 const modes = ['s', '1', '2', '3', '4'];
 const minActiveFor = 150;
 const maxActiveFor = 1500;
-const soundfile = './2handys.mp3';
-const charInactive = 'O';
-const charActive = 'O';
+const soundfile = './sound.mp3';
+const charInactive = '·';
+const charActive = 'TOM';
 // const charActive = 'ק';
 // const charActive = 'ᄌ';
 // const charActive = '†';
@@ -24,7 +24,7 @@ let activeFor = 250;
 let mode = '';
 let frameCounter = 0;
 let intervalsPassed = 0;
-let layer0, layer1, layer2, layer3, layer4 = null;
+let layers = new Array(numberOfLayers).fill(null);
 let map = new Array(numberOfLayers).fill(0).map(() => new Array(9).fill(0).map(() => new Array(16).fill(false))); // [layer, row, column]
 let mapPrevious = structuredClone(map);
 let dataArray = null; // 16 langes array mit werten von 0 bis 255 vom analyser
@@ -32,13 +32,39 @@ let dataArray = null; // 16 langes array mit werten von 0 bis 255 vom analyser
 function setup() {
   noCanvas();
   createGrid(16, 9);
-
-  layer0 = select('#grid0');
-  layer1 = select('#grid1');
-  layer2 = select('#grid2');
-  layer3 = select('#grid3');
-  layer4 = select('#grid4');
+  for (let i = 0; i < numberOfLayers; i++) {
+    layers[i] = select('#grid' + i);
+  }
   frameRate(framerate);
+}
+
+function draw() {
+  if (layers[layers.length - 1] == null) {
+    return;
+  }
+
+  const halfX = windowWidth / 2;
+  const halfY = windowHeight / 2;
+
+  const yPercentage = mouseY / windowHeight;
+  const xPercentage = mouseX / windowWidth;
+
+  intervalSize = calcRelativeValue(minIntervalSize, maxIntervalSize, yPercentage);
+  activeFor = calcRelativeValue(minActiveFor, maxActiveFor, xPercentage);
+
+  for (let i = 0; i < numberOfLayers; i++) {
+    const percentage = (numberOfLayers - i) / numberOfLayers;
+    layers[i].style('left', (((halfX - mouseX) / halfX) * 32 * percentage) + 'px')
+    layers[i].style('top', (((halfY - mouseY) / halfY) * 18 * percentage) + 'px')
+  }
+
+
+  frameCounter++;
+  if (frameCounter >= framerate / intervalSize) {
+    frameCounter = 0;
+    intervalsPassed++;
+    onSecondPassed()
+  }
 }
 
 function calcRelativeValue(min, max, percent) {
@@ -104,42 +130,6 @@ function clearMap() {
   map = new Array(numberOfLayers).fill(0).map(() => new Array(9).fill(0).map(() => new Array(16).fill(false)));
 }
 
-function draw() {
-  if (layer4 == null) {
-    return;
-  }
-
-  const halfX = windowWidth / 2;
-  const halfY = windowHeight / 2;
-
-  const yPercentage = mouseY / windowHeight;
-  const xPercentage = mouseX / windowWidth;
-
-  intervalSize = calcRelativeValue(minIntervalSize, maxIntervalSize, yPercentage);
-  activeFor = calcRelativeValue(minActiveFor, maxActiveFor, xPercentage);
-
-  layer0.style('left', (((halfX - mouseX) / halfX) * 23) + 'px');
-  layer0.style('top', (((halfY - mouseY) / halfY) * 13) + 'px');
-
-  layer1.style('left', (((halfX - mouseX) / halfX) * 18) + 'px');
-  layer1.style('top', (((halfY - mouseY) / halfY) * 10) + 'px');
-
-  layer2.style('left', (((halfX - mouseX) / halfX) * 13) + 'px');
-  layer2.style('top', (((halfY - mouseY) / halfY) * 7) + 'px');
-
-  layer3.style('left', (((halfX - mouseX) / halfX) * 8) + 'px');
-  layer3.style('top', (((halfY - mouseY) / halfY) * 4) + 'px');
-
-  layer4.style('left', (((halfX - mouseX) / halfX) * 3) + 'px');
-  layer4.style('top', (((halfY - mouseY) / halfY) * 1) + 'px');
-
-  frameCounter++;
-  if (frameCounter >= framerate / intervalSize) {
-    frameCounter = 0;
-    intervalsPassed++;
-    onSecondPassed()
-  }
-}
 
 function onSecondPassed() {
   if (mode === '3') {
