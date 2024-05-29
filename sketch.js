@@ -1,24 +1,23 @@
 // CONFIG
-const numberOfLayers = 5;
+const numberOfLayers = 7;
 const framerate = 120;
 const minIntervalSize = 25;
 const maxIntervalSize = 5; // 1: 1 Second, 10: 0.1 Seconds
 const modes = ['s', '1', '2', '3', '4'];
 const minActiveFor = 150;
 const maxActiveFor = 1500;
-const soundfile = './sound.mp3';
+const soundfile = './beat.mp3';
+const volume = 0.25;
 const charInactive = '·';
-const charActive = 'TOM';
-// const charActive = 'ק';
-// const charActive = 'ᄌ';
-// const charActive = '†';
-// const charActive = 'վ';
+const charActive = '|';
 
 let audio = null;
 let audioSource = null;
 let analyser = null;
 let context = null;
+let zoom = null;
 
+let zoomActive = true;
 let intervalSize = 25;
 let activeFor = 250;
 let mode = '';
@@ -32,6 +31,7 @@ let dataArray = null; // 16 langes array mit werten von 0 bis 255 vom analyser
 function setup() {
   noCanvas();
   createGrid(16, 9);
+  zoom = select('#grids')
   for (let i = 0; i < numberOfLayers; i++) {
     layers[i] = select('#grid' + i);
   }
@@ -72,10 +72,13 @@ function calcRelativeValue(min, max, percent) {
 }
 
 document.addEventListener('keydown', function (e) {
+  if (e.key === 'z') {
+    zoomActive = !zoomActive;
+    zoom.style('transform', 'scale(1)');
+  }
   if (modes.includes(e.key)) {
     mode = e.key;
     clearMap();
-
     if (mode === '3') {
       initSound();
     } else {
@@ -95,7 +98,7 @@ function initSound() {
     context = new AudioContext();
   }
   audio.currentTime = 0;
-  audio.volume = 0.5;
+  audio.volume = volume;
   audio.play();
 
   if (!analyser) {
@@ -118,8 +121,8 @@ function initSound() {
     }
     analyser.getByteFrequencyData(dataArray);
     drawSoundBars();
-    moveLayers();
     drawMap();
+    moveLayers();
     requestAnimationFrame(analyze);
   }
 
@@ -146,13 +149,18 @@ function onSecondPassed() {
       drawSoundBars();
       break;
   }
-  moveLayers();
   drawMap();
+  moveLayers();
 }
 
 function drawSoundBars() {
   if (dataArray === null) {
     return;
+  }
+  if (zoomActive) {
+    let scalefactor = Math.floor(dataArray.reduce((acc, wert) => acc + wert, 0) / dataArray.length);
+    scalefactor = (scalefactor / 255) ** 3;
+    zoom.style('transform', 'scale(' + (Math.min(1 + scalefactor, 1.05)) + ')');
   }
   for (let col = 0; col < 16; col++) {
     const activeSquares = Math.round((dataArray[Math.floor(col * 1.3)] / 230) * 9);

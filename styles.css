@@ -6,81 +6,48 @@
 
 * {
     box-sizing: border-box;
+    user-select: none;
+    cursor: url("./cursor.svg"), auto;
     --bg: black;
     --no: white;
     
-    --sq: #ffd23e;
     --sq: black;
-    --sq: #3eb2ff;
-    --sq: #c004d9;
     --sq: #d90479;
-    --sq: #04D976;
-
-    --gradient0: #CB01E9;
-    --gradient1: #B220EB;
-    --gradient2: #993FED;
-    --gradient3: #805DEF;
-    --gradient4: #677CF2;
-    --gradient5: #4D9BF4;
-    --gradient6: #34BAF6;
-    --gradient7: #1BD8F8;
-    --gradient8: #02F7FA;
+    --sq: #3eb2ff;
+    --sq: #04d976;
+    --sq: #ffd23e;
+    
+    --gradient0: #D90479;
+    --gradient1: #C81788;
+    --gradient2: #B72B97;
+    --gradient3: #A53EA6;
+    --gradient4: #9451B5;
+    --gradient5: #8365C3;
+    --gradient6: #7278D2;
+    --gradient7: #608BE1;
+    --gradient8: #4F9FF0;
 }
 
 body {
     margin: 0;
     background-color: var(--bg);
+    overflow: hidden;
     color: white;
     font-weight: 700;
+}
+
+#grids {
     align-items: center;
     justify-content: center;
     font-family: "Bandeins Strange";
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
-}
-
-#controls {
-    box-sizing: border-box;
-    position: absolute;
-    right: 100vw;
-    top: 50vh;
-    transform: translateY(-50%);
-    padding: 2rem;
-    background-color: var(--bg);
-    border: 2px solid white;
-    border-left-width: 0;
-    border-radius: 0 1rem 1rem 0;
-    transition: all 0.2s ease;
-    width: 15rem;
-}
-
-#controls::after {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 100%;
-    width: 20px;
-    height: 50px;
-    display: block;
-    content: "?";
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--bg);
-    margin-left: 2px;
-}
-
-#controls:hover {
-    cursor: pointer;
-    transform: translate(100%, -50%);
 }
 
 .grid {
     width: 100vw;
     height: 100vh;
     display: grid;
-    overflow: hidden;
     box-sizing: border-box;
     position: absolute;
     top: 0;
@@ -98,15 +65,16 @@ body {
     height: 100px;
     transition: all 0 ease;
     color: var(--no);
-    font-size: 1.5rem;
+    font-size: 0.75rem;
 }
 
 .active {
     font-family: "Bandeins Strange";
     font-variation-settings: "wdth" 900;
     color: var(--sq) !important;
-    /* text-shadow: 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq); */
-    text-shadow: 0 0 2px #fff, 0 0 6px var(--sq), 0 0 8px var(--sq), 0 0 10px var(--sq), 0 0 6px var(--sq), 0 0 7px var(--sq);
+    /* text-shadow: 0 0 2px #fff, 0 0 1px var(--sq), 0 0 2px var(--sq), 0 0 3px var(--sq); */
+    text-shadow: 0 0 6px var(--sq), 0 0 8px var(--sq);
+    font-size: 2rem;
 }
 
 #grid0 {
@@ -138,12 +106,12 @@ body {
     filter: brightness(5%);
 }
 
-/* .r0.active { color: var(--gradient0) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient0), 0 0 8px var(--gradient0), 0 0 10px var(--gradient0), 0 0 6px var(--gradient0), 0 0 7px var(--gradient0); }
-.r1.active { color: var(--gradient1) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient1), 0 0 8px var(--gradient1), 0 0 10px var(--gradient1), 0 0 6px var(--gradient1), 0 0 7px var(--gradient1); }
-.r2.active { color: var(--gradient2) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient2), 0 0 8px var(--gradient2), 0 0 10px var(--gradient2), 0 0 6px var(--gradient2), 0 0 7px var(--gradient2); }
-.r3.active { color: var(--gradient3) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient3), 0 0 8px var(--gradient3), 0 0 10px var(--gradient3), 0 0 6px var(--gradient3), 0 0 7px var(--gradient3); }
-.r4.active { color: var(--gradient4) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient4), 0 0 8px var(--gradient4), 0 0 10px var(--gradient4), 0 0 6px var(--gradient4), 0 0 7px var(--gradient4); }
-.r5.active { color: var(--gradient5) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient5), 0 0 8px var(--gradient5), 0 0 10px var(--gradient5), 0 0 6px var(--gradient5), 0 0 7px var(--gradient5); }
-.r6.active { color: var(--gradient6) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient6), 0 0 8px var(--gradient6), 0 0 10px var(--gradient6), 0 0 6px var(--gradient6), 0 0 7px var(--gradient6); }
-.r7.active { color: var(--gradient7) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient7), 0 0 8px var(--gradient7), 0 0 10px var(--gradient7), 0 0 6px var(--gradient7), 0 0 7px var(--gradient7); }
-.r8.active { color: var(--gradient8) !important; text-shadow: 0 0 1px #fff, 0 0 6px var(--gradient8), 0 0 8px var(--gradient8), 0 0 10px var(--gradient8), 0 0 6px var(--gradient8), 0 0 7px var(--gradient8); } */
+.r0.active { color: var(--gradient0) !important; text-shadow: 0 0 6px var(--gradient0), 0 0 8px var(--gradient0) }
+.r1.active { color: var(--gradient1) !important; text-shadow: 0 0 6px var(--gradient1), 0 0 8px var(--gradient1) }
+.r2.active { color: var(--gradient2) !important; text-shadow: 0 0 6px var(--gradient2), 0 0 8px var(--gradient2) }
+.r3.active { color: var(--gradient3) !important; text-shadow: 0 0 6px var(--gradient3), 0 0 8px var(--gradient3) }
+.r4.active { color: var(--gradient4) !important; text-shadow: 0 0 6px var(--gradient4), 0 0 8px var(--gradient4) }
+.r5.active { color: var(--gradient5) !important; text-shadow: 0 0 6px var(--gradient5), 0 0 8px var(--gradient5) }
+.r6.active { color: var(--gradient6) !important; text-shadow: 0 0 6px var(--gradient6), 0 0 8px var(--gradient6) }
+.r7.active { color: var(--gradient7) !important; text-shadow: 0 0 6px var(--gradient7), 0 0 8px var(--gradient7) }
+.r8.active { color: var(--gradient8) !important; text-shadow: 0 0 6px var(--gradient8), 0 0 8px var(--gradient8) }
